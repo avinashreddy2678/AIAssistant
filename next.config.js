@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = {
-    images: {
-      domains: ['ai-assistant26.vercel.app'], // Add domains for images (required for external images)
-      deviceSizes: [320, 420, 768, 1024, 1200], // Default device sizes for image optimization
-    },
-  
-}
+// next.config.js
+module.exports = {
+  images: {
+    domains: ['oaidalleapiprodscus.blob.core.windows.net'],
+  },
+};
+
 
 module.exports = nextConfig;
