@@ -1,10 +1,9 @@
 /** @type {import('next').NextConfig} */
 // next.config.js
-module.exports = {
+const nextConfig = {
   images: {
     domains: ['oaidalleapiprodscus.blob.core.windows.net'],
   },
 };
-
 
 module.exports = nextConfig;
