@@ -1,5 +1,5 @@
 "use client";
-import { ArrowLeftIcon, BotIcon, MousePointer2, UserIcon } from "lucide-react";
+import { ArrowLeftIcon, BookOpen, BotIcon, MousePointer2, UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
@@ -16,8 +16,25 @@ const Page = () => {
   // const [imageurl, setimageurl] = useState("");
   const { data, isLoading, mutate } = useApiLimit();
   const [answer, setanswer] = useState([]);
- 
-  
+  // const downloadimg = async(img: string) => {
+  //   fetch(img)
+  // .then(response => {
+  //   if (!response.ok) {
+  //     throw new Error(`HTTP error! Status: ${response.status}`);
+  //   }
+  //   return response.blob();
+  // })
+  // .then(blob => {
+  //   // Do something with the Blob object, e.g., create a downloadable link
+  //   const link = document.createElement('a');
+  //   link.href = URL.createObjectURL(blob);
+  //   link.download = 'downloaded-image.jpg';
+  //   document.body.appendChild(link);
+  //   link.click();
+  //   document.body.removeChild(link);
+  // })
+  // };
+
   const pro = useProModal();
   //console.log(answer);
   const handlesubmit = async () => {
@@ -48,7 +65,7 @@ const Page = () => {
         }}
       >
         <ArrowLeftIcon />
-        {pro ? <OpenModal/> : ""}
+        {pro ? <OpenModal /> : ""}
       </div>
       <div className="text-4xl mt-12 font-bold text-center">
         AI Image Generator
@@ -76,29 +93,41 @@ const Page = () => {
           </div>
         </div>
         {answer.length > 0 &&
-        answer.map((item: { label: string; text: string }) => (
-          <div key={item.text}>
-            {item.label === "user" ? (
-              <Card className="py-2 w-[60vw] mt-12  m-auto px-3 bottom-12 my-4">
-                <div className=" flex justify-start items-center">
-                  <div className="p-2 mr-10 rounded-full bg-green-400">
-                    <UserIcon />
+          answer.map((item: { label: string; text: string }) => (
+            <div key={item.text}>
+              {item.label === "user" ? (
+                <Card className="py-2 w-[60vw] mt-12  m-auto px-3 bottom-12 my-4">
+                  <div className=" flex justify-start items-center">
+                    <div className="p-2 mr-10 rounded-full bg-green-400">
+                      <UserIcon />
+                    </div>
+                    <div>{item.text}</div>
                   </div>
-                  <div>{item.text}</div>
+                </Card>
+              ) : (
+                <div className=" flex  justify-center mt-12 items-center">
+                 <div className="flex flex-col justify-center items-center">
+                  <Image
+                    
+                    width={254}
+                    height={424}
+                    src={item.text}
+                    alt="image"
+                  />
+                  <div  onClick={() => window.open(item.text)} className="bg-blue-50 text-center font-bold hover:bg-blue-100 w-full mt-3 py-2">
+                  {/* <BookOpen className="w-full"/> */}
+                  Open Image
+                  </div>
+                  
+                  </div>
+                  <div className="p-2 ml-10  rounded-full bg-pink-400">
+                    <BotIcon />
+                  </div>
                 </div>
-              </Card>
-            ) : (
-              <div className=" flex  justify-center mt-12 items-center">
-                <Image width={254} height={424} src={item.text} alt="image" />
-                <div className="p-2 ml-10  rounded-full bg-pink-400">
-                  <BotIcon />
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
+              )}
+            </div>
+          ))}
       </div>
-    
     </div>
   );
 };
