@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
         text:messages,
         label:"user"
       }
-      user.messages.unshift(newmessage);
+      user.messages.push(newmessage);
       const completion = await openai.chat.completions.create({
         model: "gpt-3.5-turbo",
         messages: [
@@ -31,7 +31,7 @@ export async function POST(req: NextRequest) {
         text:completion.choices[0].message.content,
         label:"bot"
       }
-      await user.messages.unshift(newreply);
+      await user.messages.push(newreply);
       await user.save();
       return NextResponse.json(completion.choices[0].message.content);
     } else {

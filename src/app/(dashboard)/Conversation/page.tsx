@@ -4,7 +4,7 @@ import axios from "axios";
 import { ArrowLeftIcon, BotIcon, MousePointer2, UserIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import ClipLoader from "react-spinners/ClipLoader";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { IncreaseApiLimit, useApiLimit } from "@/app/libs/apilimit";
 import { MAx_chat } from "@/app/constants";
 import OpenModal from "@/app/Components/OpenModal";
@@ -12,7 +12,7 @@ import { useProModal } from "@/app/hooks/useOpnemodal";
 
 interface Question {
   text: string;
-  from: string;
+  label: string;
   time: Date;
 }
 
@@ -23,6 +23,7 @@ const ConvoPage = () => {
   const [question, setquestion] = useState("");
   const [alltexts, setalltexts] = useState<Question[]>([]);
   const [loading, setloading] = useState(false);
+
   const pro = useProModal();
   const handleEnter = async (e: any) => {
     e.preventDefault();
@@ -33,7 +34,7 @@ const ConvoPage = () => {
         time: new Date(),
       };
 
-      setalltexts((prev: any) => [...prev, newQuestion]);
+      //setalltexts((prev: any) => [...prev, newQuestion]);
       setloading(true);
       const res = await axios.post("/api/conversation", { messages: question });
       setloading(false);
@@ -42,17 +43,23 @@ const ConvoPage = () => {
         from: "bot",
         time: new Date(),
       };
-      setalltexts((prev: any) => [...prev, reply]);
+      //setalltexts((prev: any) => [...prev, reply]);
       await IncreaseApiLimit("chatcredits");
       mutate();
     } else {
-      await pro.onOpen();
+       pro.onOpen();
       mutate();
     }
     setloading(false);
     setquestion("");
   };
 
+
+  useEffect(() => {
+    if (!isLoading) {
+      setalltexts(data?.user?.messages);
+    }
+  }, [isLoading, data?.user?.messages]);
   return (
     <div className="flex h-full flex-col pt-5 pl-3 justify-between z-40">
       <div
@@ -74,9 +81,9 @@ const ConvoPage = () => {
             ""
           )}
           {alltexts.map((item) => (
-            <div key={item.time.getTime()}>
+            <div key={item.text}>
               <Card className="py-2 px-3 bottom-12 my-4">
-                {item.from !== "bot" ? (
+                {item.label === "user" ? (
                   <div className=" flex justify-end items-center">
                     <div className=" font-bold">{item.text}</div>
                     <div className="p-2 ml-10 rounded-full bg-pink-400">

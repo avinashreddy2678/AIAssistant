@@ -10,15 +10,18 @@ const openai = new OpenAI({
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json();
-    const userId = auth();
+    const {userId} = auth();
     const { messages } = body;
+    //console.log(messages)
     const user = await UserModel.findOne({ userid: userId });
+    //console.log(userId);
     if (user) {
       const newmessage={
         text:messages,
         label:"user"
       }
-      await user.img.unshift(newmessage);
+      //console.log(newmessage);
+      await user.img.push(newmessage);
       const completion = await openai.images.generate({
         // model: "dall-e-3",
         prompt: messages,
@@ -31,12 +34,12 @@ export async function POST(req: NextRequest) {
         text:image_url,
         label:"bot"
       }
-      await user.img.unshift(newreply);
+      await user.img.push(newreply);
       await user.save()
       return NextResponse.json(image_url);
     
     }
   } catch (err) {
-    return NextResponse.json(err);
+    return NextResponse.json(err+"hwllo");
   }
 }

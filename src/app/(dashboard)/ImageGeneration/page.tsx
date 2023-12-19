@@ -1,32 +1,42 @@
 "use client";
-import { ArrowLeftIcon, MousePointer2 } from "lucide-react";
+import { ArrowLeftIcon, BotIcon, MousePointer2, UserIcon } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { IncreaseApiLimit, useApiLimit } from "@/app/libs/apilimit";
 import { MAx_img } from "@/app/constants";
 import { useProModal } from "@/app/hooks/useOpnemodal";
+import { Card } from "@/app/Components/ui/card";
+import OpenModal from "@/app/Components/OpenModal";
 
 const Page = () => {
   const router = useRouter();
   const [prompt, setprompt] = useState("");
-  const [imageurl, setimageurl] = useState("");
+  // const [imageurl, setimageurl] = useState("");
   const { data, isLoading, mutate } = useApiLimit();
+  const [answer, setanswer] = useState([]);
   const pro = useProModal();
+  //console.log(answer);
   const handlesubmit = async () => {
     if (!isLoading && data?.user?.imgcredits < MAx_img) {
       const res = await axios.post("/api/imagegeneration", {
         messages: prompt,
       });
       setprompt("");
-      setimageurl(res.data);
+      // setimageurl(res.data);
+      //console.log(res.data);
       await IncreaseApiLimit("imgcredits");
     } else {
       pro.onOpen();
       mutate();
     }
   };
+  useEffect(() => {
+    if (!isLoading) {
+      setanswer(data?.user?.img);
+    }
+  }, [isLoading, data?.user?.img]);
   return (
     <div className="flex h-full flex-col pt-5 pl-3 z-40">
       <div
@@ -36,6 +46,7 @@ const Page = () => {
         }}
       >
         <ArrowLeftIcon />
+        {pro ? <OpenModal/> : ""}
       </div>
       <div className="text-4xl mt-12 font-bold text-center">
         AI Image Generator
@@ -62,14 +73,30 @@ const Page = () => {
             </div>
           </div>
         </div>
-        <div className="flex items-center mt-12 justify-center">
-          {imageurl !== "" ? (
-            <Image width={254} height={424} src={imageurl} alt="image" />
-          ) : (
-            ""
-          )}
-        </div>
+        {answer.length > 0 &&
+        answer.map((item: { label: string; text: string }) => (
+          <div key={item.text}>
+            {item.label === "user" ? (
+              <Card className="py-2 w-[60vw] mt-12  m-auto px-3 bottom-12 my-4">
+                <div className=" flex justify-start items-center">
+                  <div className="p-2 mr-10 rounded-full bg-green-400">
+                    <UserIcon />
+                  </div>
+                  <div>{item.text}</div>
+                </div>
+              </Card>
+            ) : (
+              <div className=" flex  justify-center mt-12 items-center">
+                <Image width={254} height={424} src={item.text} alt="image" />
+                <div className="p-2 ml-10  rounded-full bg-pink-400">
+                  <BotIcon />
+                </div>
+              </div>
+            )}
+          </div>
+        ))}
       </div>
+    
     </div>
   );
 };
