@@ -107,7 +107,7 @@ const ConvoPage = () => {
                   data-testid="loader"
                   className="pr-3 mr-3"
                 />
-                Wait....
+                Wait...
               </>
             ) : (
               ""
