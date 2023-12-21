@@ -9,6 +9,7 @@ import { IncreaseApiLimit, useApiLimit } from "@/app/libs/apilimit";
 import { MAx_chat } from "@/app/constants";
 import OpenModal from "@/app/Components/OpenModal";
 import { useProModal } from "@/app/hooks/useOpnemodal";
+import Image from "next/image";
 
 interface Question {
   text: string;
@@ -28,21 +29,15 @@ const ConvoPage = () => {
   const handleEnter = async (e: any) => {
     e.preventDefault();
     if (!isLoading && data?.user?.chatcredits < MAx_chat) {
-      const newQuestion = {
-        text: question,
-        from: "user",
-        time: new Date(),
-      };
-
       //setalltexts((prev: any) => [...prev, newQuestion]);
       setloading(true);
       const res = await axios.post("/api/conversation", { messages: question });
       setloading(false);
-      const reply = {
-        text: res.data,
-        from: "bot",
-        time: new Date(),
-      };
+      // const reply = {
+      //   text: res.data,
+      //   from: "bot",
+      //   time: new Date(),
+      // };
       //setalltexts((prev: any) => [...prev, reply]);
       await IncreaseApiLimit("chatcredits");
       mutate();
@@ -75,7 +70,8 @@ const ConvoPage = () => {
         <div className="px-10 my-auto md:px-20 lg:px-36 space-y-4">
           {alltexts.length <= 0 ? (
             <>
-              <h1 className="text-center">No conversation strated</h1>
+              <h1 className="text-center font-bold text-2xl">Start Conversation</h1>
+              <Image className="w-full" src='/assests/d1.png' width={340} height={320} alt="image"/>
             </>
           ) : (
             ""
@@ -109,9 +105,9 @@ const ConvoPage = () => {
                   size={25}
                   aria-label="Loading Spinner"
                   data-testid="loader"
-                  className="pr-3"
+                  className="pr-3 mr-3"
                 />
-                Wait
+                Wait....
               </>
             ) : (
               ""
